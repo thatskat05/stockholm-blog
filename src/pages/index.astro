@@ -5,6 +5,10 @@ import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import { Image } from 'astro:assets';
 import mePhoto from '../assets/101_0540.JPG';
+import { getCollection } from 'astro:content';
+const posts = (await getCollection('blog'))
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 5);
 ---
 
 <!doctype html>
@@ -31,6 +35,15 @@ import mePhoto from '../assets/101_0540.JPG';
 						</p>
 					</div>
 				</div>
+<h2>✏️ latest from the blog</h2>
+<ul>
+	{posts.map((post) => (
+		<li>
+			<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+			<span class="date"> — <FormattedDate date={post.data.pubDate} /></span>
+		</li>
+	))}
+</ul>
 				<div class="sidebar">
 					<div class="retro-box" style="text-align: center;">
 						<div class="box-title">me!!</div>
