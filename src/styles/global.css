@@ -428,3 +428,32 @@ footer::after {
 	bottom: -10px;
 	transform: scaleY(-1);
 }
+.featured-post {
+	background: #ffffff;
+	border: 2px ridge #9db8d6;
+	padding: 0 14px 10px;
+	margin: 16px 0;
+}
+
+.featured-post .box-title {
+	margin: 0 -14px 10px;
+}
+
+.featured-thumb {
+	float: right;
+	margin: 0 0 10px 14px;
+	border: 2px solid var(--frame-blue);
+	padding: 3px;
+	background: #ffffff;
+	height: auto;
+}
+
+.featured-title {
+	margin-top: 0;
+}
+
+.featured-post::after {
+	content: '';
+	display: block;
+	clear: both;
+}
