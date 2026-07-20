@@ -13,22 +13,46 @@ import mePhoto from '../assets/101_0540.JPG';
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 	</head>
 	<body>
-		<Header />
-		<main>
-		<Image src={mePhoto} alt="me, excited and overpacked" width={200} class="float-photo" />
-		<h1>välkommen! ⭐</h1>
-	i'm katherine — physics + industrial engineering student...
-			
-				<p>
-					i'm katherine — physics + industrial engineering student, coffee
-					enthusiast, and as of august, temporary stockholmare. this is where
-					i'm documenting a semester at KTH: the classes, the travel, the
-					fika, and whatever else sweden throws at me.
-				</p>
-				<p>
-					new here? start with the <a href="/blog">blog</a> or read <a href="/about"> about me</a>.
-				</p>
-		</main>
+<main>
+	<div class="layout">
+		<div class="main-col">
+			<h1>välkommen! 🇸🇪</h1>
+			<p>
+				i'm katherine — physics + industrial engineering student, coffee
+				enthusiast, and as of august, temporary stockholmare. this is where
+				i'm documenting a semester at KTH: the classes, the travel, the
+				fika, and whatever else sweden throws at me.
+			</p>
+			<p>
+				new here? start with the <a href="/blog">blog</a> or read
+				<a href="/about">about me</a>.
+			</p>
+		</div>
+
+		<div class="sidebar">
+			<div class="retro-box" style="text-align: center;">
+				<div class="box-title">me!!</div>
+				<Image src={mePhoto} alt="me at the eiffel tower" width={200} />
+			</div>
+
+			<div class="retro-box">
+				<div class="box-title">♪ the sverige soundtrack</div>
+				<iframe
+					src="https://open.spotify.com/embed/playlist/YOUR_PLAYLIST_ID"
+					width="100%" height="352" frameborder="0"
+					allow="encrypted-media" loading="lazy">
+				</iframe>
+			</div>
+
+			<div class="retro-box">
+				<div class="box-title">currently...</div>
+				reading: kalle blomkvist<br />
+				drinking: filter coffee<br />
+				mood: förväntansfull
+			</div>
+		</div>
+	</div>
+</main>
 		<Footer />
 	</body>
 	<div class="retro-box">

@@ -366,3 +366,28 @@ footer::after {
 	padding: 3px;
 	background: #ffffff;
 }
+
+.layout {
+	display: flex;
+	gap: 20px;
+	align-items: flex-start;
+}
+
+.main-col {
+	flex: 1;
+	min-width: 0;
+}
+
+.sidebar {
+	width: 230px;
+	flex-shrink: 0;
+}
+
+@media (max-width: 780px) {
+	.layout {
+		flex-direction: column;
+	}
+	.sidebar {
+		width: 100%;
+	}
+}
