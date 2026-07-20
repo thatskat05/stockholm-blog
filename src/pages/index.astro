@@ -38,15 +38,36 @@ const [latestPost, ...olderPosts] = posts;
 						</p>
 					</div>
 
-					<h2>✏️ latest from the blog</h2>
-					<ul>
-						{posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>{post.data.title}</a>
-								<span class="date"> — <FormattedDate date={post.data.pubDate} /></span>
-							</li>
-						))}
-					</ul>
+				{latestPost && (
+	<div class="featured-post">
+		<div class="box-title">✏️ latest post</div>
+		{latestPost.data.heroImage && (
+			<a href={`/blog/${latestPost.id}/`}>
+				<Image src={latestPost.data.heroImage} alt="" width={280} class="featured-thumb" />
+			</a>
+		)}
+		<h2 class="featured-title">
+			<a href={`/blog/${latestPost.id}/`}>{latestPost.data.title}</a>
+		</h2>
+		<p class="date"><FormattedDate date={latestPost.data.pubDate} /></p>
+		<p>{latestPost.data.description}</p>
+		<p><a href={`/blog/${latestPost.id}/`}>read more »</a></p>
+	</div>
+)}
+
+{olderPosts.length > 0 && (
+	<>
+		<h2>✏️ earlier posts</h2>
+		<ul>
+			{olderPosts.map((post) => (
+				<li>
+					<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+					<span class="date"> — <FormattedDate date={post.data.pubDate} /></span>
+				</li>
+			))}
+		</ul>
+	</>
+)}
 				</div>
 				<div class="sidebar">
 					<div class="retro-box" style="text-align: center;">
