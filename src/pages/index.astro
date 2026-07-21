@@ -24,50 +24,78 @@ const [latestPost, ...olderPosts] = posts;
 		<main>
 			<div class="layout">
 				<div class="main-col">
-					<div class="intro-box">
-						<h1>välkommen! 🇸🇪</h1>
-						<p>
-							i'm katherine — physics + industrial engineering student, coffee
-							enthusiast, and as of august, temporary stockholmare. this is where
-							i'm documenting a semester at KTH: the classes, the travel, the
-							fika, and whatever else sweden throws at me.
-						</p>
-						<p>
-							new here? start with the <a href="/blog">blog</a> or read
-							<a href="/about">about me</a>.
-						</p>
+
+					<div style="position:relative; margin: 20px 0;">
+						<svg style="position:absolute; top:-8px; left:-8px; width:calc(100% + 16px); height:calc(100% + 16px); overflow:visible; pointer-events:none;" aria-hidden="true">
+							<polyline id="zz-border" fill="none" stroke="#2b4c7e" stroke-width="2.5" stroke-linejoin="round"/>
+						</svg>
+						<div class="intro-box" id="intro-content">
+							<h1>välkommen! 🇸🇪</h1>
+							<p>
+								i'm katherine — physics + industrial engineering student, coffee
+								enthusiast, and as of august, temporary stockholmare. this is where
+								i'm documenting a semester at KTH: the classes, the travel, the
+								fika, and whatever else sweden throws at me.
+							</p>
+							<p>
+								new here? start with the <a href="/blog">blog</a> or read <a href="/about">about me</a>.
+							</p>
+						</div>
+						<script>
+							function drawZigzag() {
+								const box = document.getElementById('intro-content');
+								const poly = document.getElementById('zz-border');
+								if (!box || !poly) return;
+								const w = box.offsetWidth + 16;
+								const h = box.offsetHeight + 16;
+								const step = 10;
+								let pts = [];
+								for (let x = 0; x <= w; x += step)
+									pts.push(`${x},${x % (step*2) === 0 ? 0 : step/2}`);
+								for (let y = step/2; y <= h; y += step)
+									pts.push(`${w},${y % (step*2) === step/2 ? y : y - step/2}`);
+								for (let x = w; x >= 0; x -= step)
+									pts.push(`${x},${h - (x % (step*2) === 0 ? 0 : step/2)}`);
+								for (let y = h - step/2; y >= 0; y -= step)
+									pts.push(`${0},${y % (step*2) === step/2 ? y : y + step/2}`);
+								pts.push(pts[0]);
+								poly.setAttribute('points', pts.join(' '));
+							}
+							document.addEventListener('DOMContentLoaded', drawZigzag);
+							window.addEventListener('resize', drawZigzag);
+						</script>
 					</div>
 
-				{latestPost && (
-	<div class="featured-post">
-		<div class="box-title">✏️ latest post</div>
-		{latestPost.data.heroImage && (
-			<a href={`/blog/${latestPost.id}/`}>
-				<Image src={latestPost.data.heroImage} alt="" width={280} class="featured-thumb" />
-			</a>
-		)}
-		<h2 class="featured-title">
-			<a href={`/blog/${latestPost.id}/`}>{latestPost.data.title}</a>
-		</h2>
-		<p class="date"><FormattedDate date={latestPost.data.pubDate} /></p>
-		<p>{latestPost.data.description}</p>
-		<p><a href={`/blog/${latestPost.id}/`}>read more »</a></p>
-	</div>
-)}
+					{latestPost && (
+						<div class="featured-post">
+							<div class="box-title">✏️ latest post</div>
+							{latestPost.data.heroImage && (
+								<a href={`/blog/${latestPost.id}/`}>
+									<Image src={latestPost.data.heroImage} alt="" width={280} class="featured-thumb" />
+								</a>
+							)}
+							<h2 class="featured-title">
+								<a href={`/blog/${latestPost.id}/`}>{latestPost.data.title}</a>
+							</h2>
+							<p class="date"><FormattedDate date={latestPost.data.pubDate} /></p>
+							<p>{latestPost.data.description}</p>
+							<p><a href={`/blog/${latestPost.id}/`}>read more »</a></p>
+						</div>
+					)}
 
-{olderPosts.length > 0 && (
-	<>
-		<h2>✏️ earlier posts</h2>
-		<ul>
-			{olderPosts.map((post) => (
-				<li>
-					<a href={`/blog/${post.id}/`}>{post.data.title}</a>
-					<span class="date"> — <FormattedDate date={post.data.pubDate} /></span>
-				</li>
-			))}
-		</ul>
-	</>
-)}
+					{olderPosts.length > 0 && (
+						<>
+							<h2>✏️ earlier posts</h2>
+							<ul>
+								{olderPosts.map((post) => (
+									<li>
+										<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+										<span class="date"> — <FormattedDate date={post.data.pubDate} /></span>
+									</li>
+								))}
+							</ul>
+						</>
+					)}
 				</div>
 				<div class="sidebar">
 					<div class="retro-box" style="text-align: center;">
@@ -75,34 +103,34 @@ const [latestPost, ...olderPosts] = posts;
 						<Image src={mePhoto} alt="me at the eiffel tower" width={200} />
 					</div>
 					<div class="retro-box">
-	<div class="box-title">♪ the sverige soundtrack</div>
-	<div style="display:flex; align-items:center; gap:12px; margin-top:8px;">
-		<svg width="100" height="100" viewBox="0 0 120 120" style="flex-shrink:0;">
-			<style>
-				@keyframes spin { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
-				@keyframes armSwing { from { transform:rotate(-8deg); } to { transform:rotate(-2deg); } }
-				.vinyl { animation:spin 3s linear infinite; transform-origin:60px 60px; }
-				.arm { transform-origin:108px 12px; animation:armSwing 6s ease-in-out infinite alternate; }
-			</style>
-			<g class="vinyl">
-				<circle cx="60" cy="60" r="56" fill="#1a1a1a"/>
-				<circle cx="60" cy="60" r="44" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="0.5"/>
-				<circle cx="60" cy="60" r="32" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="0.5"/>
-				<circle cx="60" cy="60" r="18" fill="#2b4c7e"/>
-				<text x="60" y="57" text-anchor="middle" font-size="5" fill="#c7d8ef" font-family="Verdana">SVERIGE</text>
-				<text x="60" y="64" text-anchor="middle" font-size="4" fill="#7a9cc4" font-family="Verdana">katherine</text>
-				<circle cx="60" cy="60" r="3" fill="#e8f0fa"/>
-			</g>
-			<line class="arm" x1="108" y1="12" x2="72" y2="58" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"/>
-			<circle cx="108" cy="12" r="5" fill="#888"/>
-			<circle cx="70" cy="60" r="3" fill="#666"/>
-		</svg>
-		<div style="font-size:11px; font-family:Verdana; line-height:1.8;">
-			currently building<br/>the playlist...<br/><br/>
-			<a href="https://open.spotify.com/playlist/78nZyqfLVcdS12o2ikTfqP">▶ listen on spotify</a>
-		</div>
-	</div>
-</div>
+						<div class="box-title">♪ the sverige soundtrack</div>
+						<div style="display:flex; align-items:center; gap:12px; margin-top:8px;">
+							<svg width="100" height="100" viewBox="0 0 120 120" style="flex-shrink:0;">
+								<style>
+									@keyframes spin { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
+									@keyframes armSwing { from { transform:rotate(-8deg); } to { transform:rotate(-2deg); } }
+									.vinyl { animation:spin 3s linear infinite; transform-origin:60px 60px; }
+									.arm { transform-origin:108px 12px; animation:armSwing 6s ease-in-out infinite alternate; }
+								</style>
+								<g class="vinyl">
+									<circle cx="60" cy="60" r="56" fill="#1a1a1a"/>
+									<circle cx="60" cy="60" r="44" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="0.5"/>
+									<circle cx="60" cy="60" r="32" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="0.5"/>
+									<circle cx="60" cy="60" r="18" fill="#2b4c7e"/>
+									<text x="60" y="57" text-anchor="middle" font-size="5" fill="#c7d8ef" font-family="Verdana">SVERIGE</text>
+									<text x="60" y="64" text-anchor="middle" font-size="4" fill="#7a9cc4" font-family="Verdana">katherine</text>
+									<circle cx="60" cy="60" r="3" fill="#e8f0fa"/>
+								</g>
+								<line class="arm" x1="108" y1="12" x2="72" y2="58" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"/>
+								<circle cx="108" cy="12" r="5" fill="#888"/>
+								<circle cx="70" cy="60" r="3" fill="#666"/>
+							</svg>
+							<div style="font-size:11px; font-family:Verdana; line-height:1.8;">
+								currently building<br/>the playlist...<br/><br/>
+								<a href="https://open.spotify.com/playlist/78nZyqfLVcdS12o2ikTfqP">▶ listen on spotify</a>
+							</div>
+						</div>
+					</div>
 					<div class="retro-box">
 						<div class="box-title">currently...</div>
 						reading: tbd<br />
