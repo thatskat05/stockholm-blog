@@ -409,20 +409,13 @@ footer::after {
 	margin-top: 10px;
 }
 
-.intro-box::before,
-.intro-box::after {
-	content: '';
-	position: absolute;
-	left: 0;
-	right: 0;
-	height: 10px;
-	background:
-		linear-gradient(-45deg, var(--panel-blue) 5px, transparent 0),
-		linear-gradient(45deg, var(--panel-blue) 5px, transparent 0);
-	background-size: 10px 10px;
-	background-repeat: repeat-x;
-	bottom: -10px;
+.intro-box::before {
+	top: -10px;
 	transform: scaleY(-1);
+}
+
+.intro-box::after {
+	bottom: -10px;
 }
 
 .intro-box::before {
