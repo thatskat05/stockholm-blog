@@ -8,7 +8,7 @@ import Footer from '../components/Footer.astro';
 <html lang="en">
 	<head>
 		<BaseHead title="the trinket shelf" description="trinkets collected abroad" />
-		<style>
+		<style is:global>
 			.shelf-stage { position: relative; width: 100%; overflow: hidden; }
 			.shelf-bg { width: 100%; display: block; }
 			.trinket { position: absolute; cursor: pointer; transform-origin: center bottom; transition: transform 0.3s ease, opacity 0.3s ease; z-index: 2; }
