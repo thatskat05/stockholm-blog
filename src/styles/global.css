@@ -392,13 +392,17 @@ footer::after {
 		width: 100%;
 	}
 }
-
 .intro-box {
 	background: var(--panel-blue);
 	border: none;
 	padding: 6px 18px 14px;
 	position: relative;
 	margin: 20px 0 14px;
+	overflow: visible;
+}
+.main-col {
+	overflow: visible;
+	min-width: 0;
 }
 
 .intro-box h1 {
