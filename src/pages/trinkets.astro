@@ -9,64 +9,58 @@ import Footer from '../components/Footer.astro';
 	<head>
 		<BaseHead title="the trinket shelf" description="trinkets collected abroad" />
 		<style>
-			.shelf-stage { position: relative; width: 100%; }
+			.shelf-stage { position: relative; width: 100%; overflow: hidden; }
 			.shelf-bg { width: 100%; display: block; }
-			.trinket { position: absolute; cursor: pointer; transition: transform 0.15s; }
-			.trinket:hover { transform: scale(1.15) translateY(-4px); }
-			.trinket img { display: block; width: 100%; }
-			.overlay-wrap { display: none; background: rgba(0,0,0,0.6); padding: 24px 16px; align-items: center; justify-content: center; }
-			.overlay-wrap.active { display: flex; }
-			.card { background: #fff; border: 2px ridge #9db8d6; padding: 16px; max-width: 280px; width: 100%; text-align: center; position: relative; }
-			.card img { max-width: 160px; max-height: 160px; margin: 0 auto 10px; display: block; }
-			.card h3 { font-family: Georgia, serif; color: #2b4c7e; font-size: 15px; font-weight: normal; margin: 0 0 4px; }
-			.card .loc { font-size: 10px; color: #888; font-style: italic; margin-bottom: 8px; }
-			.card p { font-size: 11px; color: #333; line-height: 1.7; margin: 0; }
-			.close-btn { position: absolute; top: 6px; right: 8px; background: none; border: none; font-size: 18px; cursor: pointer; color: #2b4c7e; font-family: Georgia, serif; }
-			.empty-msg { text-align: center; font-size: 11px; color: #8b6f4e; font-style: italic; padding: 10px 0; }
+			.trinket { position: absolute; cursor: pointer; transform-origin: center bottom; transition: transform 0.3s ease, opacity 0.3s ease; z-index: 2; }
+			.trinket img { display: block; width: 100%; pointer-events: none; }
+			.trinket.dimmed { opacity: 0.25; }
+			.trinket.zoomed { z-index: 20; transform: scale(2.8) translateY(-15%); }
+			.shelf-stage.has-active::after { content: ''; position: absolute; inset: 0; background: rgba(40,20,5,0.45); z-index: 5; pointer-events: all; }
+			.note-card { display: none; position: absolute; background: #fffdf7; border: 2px ridge #9db8d6; padding: 10px 12px; font-size: 10px; line-height: 1.7; color: #333; max-width: 160px; z-index: 25; pointer-events: none; }
+			.note-card.active { display: block; }
+			.note-card h3 { font-family: Georgia, serif; color: #2b4c7e; font-size: 12px; font-weight: normal; margin-bottom: 3px; border-bottom: 1px dotted #9db8d6; padding-bottom: 3px; }
+			.note-card .loc { color: #888; font-style: italic; font-size: 9px; margin-bottom: 5px; }
+			.note-card .close-hint { margin-top: 6px; color: #aaa; font-size: 9px; font-style: italic; }
+			.empty-msg { text-align: center; font-size: 11px; color: #8b6f4e; font-style: italic; padding: 16px 0; }
 		</style>
 	</head>
 	<body>
 		<Header />
 		<main>
 			<h1>the trinket shelf</h1>
-			<p style="font-size:11px; color:#888; margin-bottom:16px;">
-				things i've collected along the way. click anything to learn more.
-			</p>
+			<p style="font-size:11px; color:#888; margin-bottom:16px;">things i've collected along the way. click anything to learn more.</p>
 
-			<div class="shelf-stage" id="shelf-stage">
-				<img class="shelf-bg" src="/shelf.png" alt="my trinket shelf" />
-			</div>
-
-			<div class="overlay-wrap" id="overlay">
-				<div class="card">
-					<button class="close-btn" id="close-btn" aria-label="close">✕</button>
-					<img id="card-img" src="" alt="" />
-					<h3 id="card-name"></h3>
-					<div class="loc" id="card-loc"></div>
-					<p id="card-note"></p>
+			<div class="shelf-stage" id="stage">
+				<img class="shelf-bg" src="/shelf.jpg" alt="my trinket shelf" />
+				<div class="note-card" id="note-card">
+					<h3 id="nc-name"></h3>
+					<div class="loc" id="nc-loc"></div>
+					<p id="nc-note"></p>
+					<div class="close-hint">click anywhere to close</div>
 				</div>
 			</div>
 
-			<p class="empty-msg" id="empty-msg">the shelf is empty for now — check back soon! ✦</p>
+			<p class="empty-msg" id="empty-msg">the shelf is empty for now — check back as i collect things! ✦</p>
 		</main>
 		<Footer />
 
 		<script>
 			const trinkets = [
-				// add trinkets here as you collect them:
 				// {
 				//   name: "dala horse",
 				//   img: "/trinkets/dala-horse.png",
 				//   location: "gamla stan, stockholm — september 2026",
-				//   note: "tiny painted wooden horse. got it from a market stall near the palace.",
-				//   x: 18,   /* percent from left */
-				//   y: 42,   /* percent from top */
-				//   size: 6  /* percent of shelf width */
+				//   note: "tiny painted wooden horse from a market stall near the palace.",
+				//   x: 18,    // percent from left edge of shelf photo
+				//   y: 42,    // percent from top edge of shelf photo
+				//   size: 6   // width as percent of shelf photo width
 				// },
 			];
 
-			const stage = document.getElementById('shelf-stage');
+			const stage = document.getElementById('stage');
+			const noteCard = document.getElementById('note-card');
 			const emptyMsg = document.getElementById('empty-msg');
+			let active = null;
 
 			if (trinkets.length > 0) emptyMsg.style.display = 'none';
 
@@ -77,20 +71,43 @@ import Footer from '../components/Footer.astro';
 				div.style.top = t.y + '%';
 				div.style.width = t.size + '%';
 				div.innerHTML = `<img src="${t.img}" alt="${t.name}" />`;
-				div.addEventListener('click', () => {
-					document.getElementById('card-img').src = t.img;
-					document.getElementById('card-img').alt = t.name;
-					document.getElementById('card-name').textContent = t.name;
-					document.getElementById('card-loc').textContent = t.location;
-					document.getElementById('card-note').textContent = t.note;
-					document.getElementById('overlay').classList.add('active');
+
+				div.addEventListener('click', e => {
+					e.stopPropagation();
+					if (active === div) { closeAll(); return; }
+					closeAll();
+					active = div;
+					div.classList.add('zoomed');
+					stage.classList.add('has-active');
+					document.querySelectorAll('.trinket').forEach(el => {
+						if (el !== div) el.classList.add('dimmed');
+					});
+					const stageW = stage.offsetWidth;
+					const stageH = stage.offsetHeight;
+					const trinketLeft = (t.x / 100) * stageW;
+					const cardX = trinketLeft > stageW * 0.55
+						? Math.max(4, trinketLeft - 175)
+						: trinketLeft + (t.size / 100) * stageW * 2.8 + 10;
+					const cardY = Math.min((t.y / 100) * stageH, stageH - 160);
+					noteCard.style.left = cardX + 'px';
+					noteCard.style.top = cardY + 'px';
+					document.getElementById('nc-name').textContent = t.name;
+					document.getElementById('nc-loc').textContent = t.location;
+					document.getElementById('nc-note').textContent = t.note;
+					noteCard.classList.add('active');
 				});
+
 				stage.appendChild(div);
 			});
 
-			document.getElementById('close-btn').addEventListener('click', () => {
-				document.getElementById('overlay').classList.remove('active');
-			});
+			function closeAll() {
+				document.querySelectorAll('.trinket').forEach(el => el.classList.remove('zoomed','dimmed'));
+				stage.classList.remove('has-active');
+				noteCard.classList.remove('active');
+				active = null;
+			}
+
+			stage.addEventListener('click', closeAll);
 		</script>
 	</body>
 </html>
