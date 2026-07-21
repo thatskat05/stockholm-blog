@@ -31,7 +31,7 @@ import Footer from '../components/Footer.astro';
 			<p style="font-size:11px; color:#888; margin-bottom:16px;">things i've collected along the way. click anything to learn more.</p>
 
 			<div class="shelf-stage" id="stage">
-				<img class="shelf-bg" src="/shelf.png" alt="my trinket shelf" />
+				<img class="shelf-bg" src="/shelf.png" alt="my trinket shelf" id="shelf-bg" />
 				<div class="note-card" id="note-card">
 					<h3 id="nc-name"></h3>
 					<div class="loc" id="nc-loc"></div>
@@ -45,63 +45,72 @@ import Footer from '../components/Footer.astro';
 		<Footer />
 
 		<script>
-		const trinkets = [
-	{
-		name: "example trinket",
-		img: "/example-trinket.png",
-		location: "gamla stan, stockholm — september 2026",
-		note: "tiny painted wooden horse. classic swedish folk art, got it from a market stall near the royal palace.",
-		x: 18,
-		y: 42,
-		size: 12
-	},
-];
+			const trinkets = [
+				{
+					name: "example trinket",
+					img: "/example-trinket.png",
+					location: "gamla stan, stockholm — september 2026",
+					note: "tiny painted wooden horse. classic swedish folk art, got it from a market stall near the royal palace.",
+					x: 18,
+					y: 42,
+					size: 12
+				},
+			];
 
 			const stage = document.getElementById('stage');
 			const noteCard = document.getElementById('note-card');
 			const emptyMsg = document.getElementById('empty-msg');
+			const shelfBg = document.getElementById('shelf-bg');
 			let active = null;
 
 			if (trinkets.length > 0) emptyMsg.style.display = 'none';
 
-			trinkets.forEach(t => {
-				const div = document.createElement('div');
-				div.className = 'trinket';
-				div.style.left = t.x + '%';
-				div.style.top = t.y + '%';
-				div.style.width = t.size + '%';
-				div.innerHTML = `<img src="${t.img}" alt="${t.name}" />`;
+			function placeTrinkets() {
+				trinkets.forEach(t => {
+					const div = document.createElement('div');
+					div.className = 'trinket';
+					div.style.left = t.x + '%';
+					div.style.top = t.y + '%';
+					div.style.width = t.size + '%';
+					div.innerHTML = `<img src="${t.img}" alt="${t.name}" />`;
 
-				div.addEventListener('click', e => {
-					e.stopPropagation();
-					if (active === div) { closeAll(); return; }
-					closeAll();
-					active = div;
-					div.classList.add('zoomed');
-					stage.classList.add('has-active');
-					document.querySelectorAll('.trinket').forEach(el => {
-						if (el !== div) el.classList.add('dimmed');
+					div.addEventListener('click', e => {
+						e.stopPropagation();
+						if (active === div) { closeAll(); return; }
+						closeAll();
+						active = div;
+						div.classList.add('zoomed');
+						stage.classList.add('has-active');
+						document.querySelectorAll('.trinket').forEach(el => {
+							if (el !== div) el.classList.add('dimmed');
+						});
+						const stageW = stage.offsetWidth;
+						const stageH = stage.offsetHeight;
+						const trinketLeft = (t.x / 100) * stageW;
+						const cardX = trinketLeft > stageW * 0.55
+							? Math.max(4, trinketLeft - 175)
+							: trinketLeft + (t.size / 100) * stageW * 2.8 + 10;
+						const cardY = Math.min((t.y / 100) * stageH, stageH - 160);
+						noteCard.style.left = cardX + 'px';
+						noteCard.style.top = cardY + 'px';
+						document.getElementById('nc-name').textContent = t.name;
+						document.getElementById('nc-loc').textContent = t.location;
+						document.getElementById('nc-note').textContent = t.note;
+						noteCard.classList.add('active');
 					});
-					const stageW = stage.offsetWidth;
-					const stageH = stage.offsetHeight;
-					const trinketLeft = (t.x / 100) * stageW;
-					const cardX = trinketLeft > stageW * 0.55
-						? Math.max(4, trinketLeft - 175)
-						: trinketLeft + (t.size / 100) * stageW * 2.8 + 10;
-					const cardY = Math.min((t.y / 100) * stageH, stageH - 160);
-					noteCard.style.left = cardX + 'px';
-					noteCard.style.top = cardY + 'px';
-					document.getElementById('nc-name').textContent = t.name;
-					document.getElementById('nc-loc').textContent = t.location;
-					document.getElementById('nc-note').textContent = t.note;
-					noteCard.classList.add('active');
-				});
 
-				stage.appendChild(div);
-			});
+					stage.appendChild(div);
+				});
+			}
+
+			if (shelfBg.complete) {
+				placeTrinkets();
+			} else {
+				shelfBg.addEventListener('load', placeTrinkets);
+			}
 
 			function closeAll() {
-				document.querySelectorAll('.trinket').forEach(el => el.classList.remove('zoomed','dimmed'));
+				document.querySelectorAll('.trinket').forEach(el => el.classList.remove('zoomed', 'dimmed'));
 				stage.classList.remove('has-active');
 				noteCard.classList.remove('active');
 				active = null;
