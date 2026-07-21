@@ -421,6 +421,8 @@ footer::after {
 		linear-gradient(45deg, var(--panel-blue) 5px, transparent 0);
 	background-size: 10px 10px;
 	background-repeat: repeat-x;
+	bottom: -10px;
+	transform: scaleY(-1);
 }
 
 .intro-box::before {
