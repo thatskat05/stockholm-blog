@@ -1,0 +1,96 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title="the trinket shelf" description="trinkets collected abroad" />
+		<style>
+			.shelf-stage { position: relative; width: 100%; }
+			.shelf-bg { width: 100%; display: block; }
+			.trinket { position: absolute; cursor: pointer; transition: transform 0.15s; }
+			.trinket:hover { transform: scale(1.15) translateY(-4px); }
+			.trinket img { display: block; width: 100%; }
+			.overlay-wrap { display: none; background: rgba(0,0,0,0.6); padding: 24px 16px; align-items: center; justify-content: center; }
+			.overlay-wrap.active { display: flex; }
+			.card { background: #fff; border: 2px ridge #9db8d6; padding: 16px; max-width: 280px; width: 100%; text-align: center; position: relative; }
+			.card img { max-width: 160px; max-height: 160px; margin: 0 auto 10px; display: block; }
+			.card h3 { font-family: Georgia, serif; color: #2b4c7e; font-size: 15px; font-weight: normal; margin: 0 0 4px; }
+			.card .loc { font-size: 10px; color: #888; font-style: italic; margin-bottom: 8px; }
+			.card p { font-size: 11px; color: #333; line-height: 1.7; margin: 0; }
+			.close-btn { position: absolute; top: 6px; right: 8px; background: none; border: none; font-size: 18px; cursor: pointer; color: #2b4c7e; font-family: Georgia, serif; }
+			.empty-msg { text-align: center; font-size: 11px; color: #8b6f4e; font-style: italic; padding: 10px 0; }
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>the trinket shelf</h1>
+			<p style="font-size:11px; color:#888; margin-bottom:16px;">
+				things i've collected along the way. click anything to learn more.
+			</p>
+
+			<div class="shelf-stage" id="shelf-stage">
+				<img class="shelf-bg" src="/shelf.jpg" alt="my trinket shelf" />
+			</div>
+
+			<div class="overlay-wrap" id="overlay">
+				<div class="card">
+					<button class="close-btn" id="close-btn" aria-label="close">✕</button>
+					<img id="card-img" src="" alt="" />
+					<h3 id="card-name"></h3>
+					<div class="loc" id="card-loc"></div>
+					<p id="card-note"></p>
+				</div>
+			</div>
+
+			<p class="empty-msg" id="empty-msg">the shelf is empty for now — check back soon! ✦</p>
+		</main>
+		<Footer />
+
+		<script>
+			const trinkets = [
+				// add trinkets here as you collect them:
+				// {
+				//   name: "dala horse",
+				//   img: "/trinkets/dala-horse.png",
+				//   location: "gamla stan, stockholm — september 2026",
+				//   note: "tiny painted wooden horse. got it from a market stall near the palace.",
+				//   x: 18,   /* percent from left */
+				//   y: 42,   /* percent from top */
+				//   size: 6  /* percent of shelf width */
+				// },
+			];
+
+			const stage = document.getElementById('shelf-stage');
+			const emptyMsg = document.getElementById('empty-msg');
+
+			if (trinkets.length > 0) emptyMsg.style.display = 'none';
+
+			trinkets.forEach(t => {
+				const div = document.createElement('div');
+				div.className = 'trinket';
+				div.style.left = t.x + '%';
+				div.style.top = t.y + '%';
+				div.style.width = t.size + '%';
+				div.innerHTML = `<img src="${t.img}" alt="${t.name}" />`;
+				div.addEventListener('click', () => {
+					document.getElementById('card-img').src = t.img;
+					document.getElementById('card-img').alt = t.name;
+					document.getElementById('card-name').textContent = t.name;
+					document.getElementById('card-loc').textContent = t.location;
+					document.getElementById('card-note').textContent = t.note;
+					document.getElementById('overlay').classList.add('active');
+				});
+				stage.appendChild(div);
+			});
+
+			document.getElementById('close-btn').addEventListener('click', () => {
+				document.getElementById('overlay').classList.remove('active');
+			});
+		</script>
+	</body>
+</html>
