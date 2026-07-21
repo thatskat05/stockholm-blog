@@ -417,19 +417,19 @@ footer::after {
 	right: 0;
 	height: 10px;
 	background:
-		linear-gradient(-45deg, var(--page-blue) 5px, transparent 0),
-		linear-gradient(45deg, var(--page-blue) 5px, transparent 0);
+		linear-gradient(-45deg, #ffffff 5px, transparent 0),
+		linear-gradient(45deg, #ffffff 5px, transparent 0);
 	background-size: 10px 10px;
 	background-repeat: repeat-x;
 }
 
 .intro-box::before {
 	top: -10px;
-	transform: scaleY(-1);
 }
 
 .intro-box::after {
 	bottom: -10px;
+	transform: scaleY(-1);
 }
 .featured-post {
 	background: #ffffff;
