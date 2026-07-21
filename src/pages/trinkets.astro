@@ -11,9 +11,9 @@ import Footer from '../components/Footer.astro';
 		<style is:global>
 			.shelf-stage { position: relative; width: 100%; overflow: hidden; }
 			.shelf-bg { width: 100%; display: block; }
-			.trinket { position: absolute; cursor: pointer; transform-origin: center bottom; transition: transform 0.3s ease; z-index: 2; }
+			.trinket { position: absolute; cursor: pointer; transform-origin: center center; transition: transform 0.3s ease; z-index: 2; }
 			.trinket img { display: block; width: 100%; pointer-events: none; }
-			.trinket.zoomed { z-index: 20; transform: scale(2.8) translateY(-15%); }
+			.trinket.zoomed { z-index: 20; }
 			.note-card { display: none; position: absolute; background: #fffdf7; border: 2px ridge #9db8d6; padding: 10px 12px; font-size: 10px; line-height: 1.7; color: #333; max-width: 160px; z-index: 25; pointer-events: none; }
 			.note-card.active { display: block; }
 			.note-card h3 { font-family: Georgia, serif; color: #2b4c7e; font-size: 12px; font-weight: normal; margin-bottom: 3px; border-bottom: 1px dotted #9db8d6; padding-bottom: 3px; }
@@ -49,11 +49,13 @@ import Footer from '../components/Footer.astro';
 					img: "/example-trinket.png",
 					location: "gamla stan, stockholm — september 2026",
 					note: "tiny painted wooden horse. classic swedish folk art, got it from a market stall near the royal palace.",
-					x: 36,
-					y: 38,
-					size: 8
+					x: 18,
+					y: 42,
+					size: 12
 				},
 			];
+
+			const ZOOM_TARGET = 200; /* all trinkets zoom to this width in px */
 
 			const stage = document.getElementById('stage');
 			const noteCard = document.getElementById('note-card');
@@ -77,22 +79,25 @@ import Footer from '../components/Footer.astro';
 						if (active === div) { closeAll(); return; }
 						closeAll();
 						active = div;
-						div.classList.add('zoomed');
 
 						const stageW = stage.offsetWidth;
 						const stageH = stage.offsetHeight;
 						const trinketW = (t.size / 100) * stageW;
-						const zoomedW = trinketW * 2.8;
-						const trinketLeft = (t.x / 100) * stageW;
-						const trinketTop = (t.y / 100) * stageH;
-						const zoomedRight = trinketLeft + (trinketW / 2) + (zoomedW / 2);
+						const scale = ZOOM_TARGET / trinketW;
+						div.classList.add('zoomed');
+						div.style.transform = 'scale(' + scale + ')';
+
+						const centerX = (t.x / 100) * stageW + trinketW / 2;
+						const centerY = (t.y / 100) * stageH + (div.offsetHeight / 2);
+						const zoomedRightEdge = centerX + ZOOM_TARGET / 2;
+						const zoomedLeftEdge = centerX - ZOOM_TARGET / 2;
 						let cardX, cardY;
-						if (zoomedRight + 180 < stageW) {
-							cardX = zoomedRight + 12;
+						if (zoomedRightEdge + 175 < stageW) {
+							cardX = zoomedRightEdge + 8;
 						} else {
-							cardX = Math.max(4, trinketLeft + (trinketW / 2) - (zoomedW / 2) - 180);
+							cardX = Math.max(4, zoomedLeftEdge - 175);
 						}
-						cardY = Math.max(8, Math.min(trinketTop - 40, stageH - 180));
+						cardY = Math.max(8, Math.min(centerY - 70, stageH - 170));
 						noteCard.style.left = cardX + 'px';
 						noteCard.style.top = cardY + 'px';
 						document.getElementById('nc-name').textContent = t.name;
@@ -112,7 +117,10 @@ import Footer from '../components/Footer.astro';
 			}
 
 			function closeAll() {
-				document.querySelectorAll('.trinket').forEach(el => el.classList.remove('zoomed'));
+				document.querySelectorAll('.trinket').forEach(el => {
+					el.classList.remove('zoomed');
+					el.style.transform = '';
+				});
 				noteCard.classList.remove('active');
 				active = null;
 			}
