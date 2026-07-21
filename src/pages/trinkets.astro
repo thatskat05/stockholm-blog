@@ -87,23 +87,27 @@ import Footer from '../components/Footer.astro';
 						div.classList.add('zoomed');
 						div.style.transform = 'scale(' + scale + ')';
 
-						const centerX = (t.x / 100) * stageW + trinketW / 2;
-						const centerY = (t.y / 100) * stageH + (div.offsetHeight / 2);
-						const zoomedRightEdge = centerX + ZOOM_TARGET / 2;
-						const zoomedLeftEdge = centerX - ZOOM_TARGET / 2;
-						let cardX, cardY;
-						if (zoomedRightEdge + 175 < stageW) {
-							cardX = zoomedRightEdge + 8;
-						} else {
-							cardX = Math.max(4, zoomedLeftEdge - 175);
-						}
-						cardY = Math.max(8, Math.min(centerY - 70, stageH - 170));
-						noteCard.style.left = cardX + 'px';
-						noteCard.style.top = cardY + 'px';
-						document.getElementById('nc-name').textContent = t.name;
-						document.getElementById('nc-loc').textContent = t.location;
-						document.getElementById('nc-note').textContent = t.note;
-						noteCard.classList.add('active');
+						setTimeout(() => {
+							if (active !== div) return;
+							const stageRect = stage.getBoundingClientRect();
+							const tRect = div.getBoundingClientRect();
+							const rightEdge = tRect.right - stageRect.left;
+							const leftEdge = tRect.left - stageRect.left;
+							const topEdge = tRect.top - stageRect.top;
+							let cardX, cardY;
+							if (rightEdge + 175 < stageW) {
+								cardX = rightEdge + 6;
+							} else {
+								cardX = Math.max(4, leftEdge - 172);
+							}
+							cardY = Math.max(8, Math.min(topEdge, stageH - 170));
+							noteCard.style.left = cardX + 'px';
+							noteCard.style.top = cardY + 'px';
+							document.getElementById('nc-name').textContent = t.name;
+							document.getElementById('nc-loc').textContent = t.location;
+							document.getElementById('nc-note').textContent = t.note;
+							noteCard.classList.add('active');
+						}, 310);
 					});
 
 					stage.appendChild(div);
