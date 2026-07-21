@@ -11,11 +11,9 @@ import Footer from '../components/Footer.astro';
 		<style is:global>
 			.shelf-stage { position: relative; width: 100%; overflow: hidden; }
 			.shelf-bg { width: 100%; display: block; }
-			.trinket { position: absolute; cursor: pointer; transform-origin: center bottom; transition: transform 0.3s ease, opacity 0.3s ease; z-index: 2; }
+			.trinket { position: absolute; cursor: pointer; transform-origin: center bottom; transition: transform 0.3s ease; z-index: 2; }
 			.trinket img { display: block; width: 100%; pointer-events: none; }
-			.trinket.dimmed { opacity: 0.25; }
 			.trinket.zoomed { z-index: 20; transform: scale(2.8) translateY(-15%); }
-			.shelf-stage.has-active::after { content: ''; position: absolute; inset: 0; background: rgba(40,20,5,0.45); z-index: 5; pointer-events: all; }
 			.note-card { display: none; position: absolute; background: #fffdf7; border: 2px ridge #9db8d6; padding: 10px 12px; font-size: 10px; line-height: 1.7; color: #333; max-width: 160px; z-index: 25; pointer-events: none; }
 			.note-card.active { display: block; }
 			.note-card h3 { font-family: Georgia, serif; color: #2b4c7e; font-size: 12px; font-weight: normal; margin-bottom: 3px; border-bottom: 1px dotted #9db8d6; padding-bottom: 3px; }
@@ -80,17 +78,21 @@ import Footer from '../components/Footer.astro';
 						closeAll();
 						active = div;
 						div.classList.add('zoomed');
-						stage.classList.add('has-active');
-						document.querySelectorAll('.trinket').forEach(el => {
-							if (el !== div) el.classList.add('dimmed');
-						});
+
 						const stageW = stage.offsetWidth;
 						const stageH = stage.offsetHeight;
+						const trinketW = (t.size / 100) * stageW;
+						const zoomedW = trinketW * 2.8;
 						const trinketLeft = (t.x / 100) * stageW;
-						const cardX = trinketLeft > stageW * 0.55
-							? Math.max(4, trinketLeft - 175)
-							: trinketLeft + (t.size / 100) * stageW * 2.8 + 10;
-						const cardY = Math.min((t.y / 100) * stageH, stageH - 160);
+						const trinketTop = (t.y / 100) * stageH;
+						const zoomedRight = trinketLeft + (trinketW / 2) + (zoomedW / 2);
+						let cardX, cardY;
+						if (zoomedRight + 180 < stageW) {
+							cardX = zoomedRight + 12;
+						} else {
+							cardX = Math.max(4, trinketLeft + (trinketW / 2) - (zoomedW / 2) - 180);
+						}
+						cardY = Math.max(8, Math.min(trinketTop - 40, stageH - 180));
 						noteCard.style.left = cardX + 'px';
 						noteCard.style.top = cardY + 'px';
 						document.getElementById('nc-name').textContent = t.name;
@@ -110,8 +112,7 @@ import Footer from '../components/Footer.astro';
 			}
 
 			function closeAll() {
-				document.querySelectorAll('.trinket').forEach(el => el.classList.remove('zoomed', 'dimmed'));
-				stage.classList.remove('has-active');
+				document.querySelectorAll('.trinket').forEach(el => el.classList.remove('zoomed'));
 				noteCard.classList.remove('active');
 				active = null;
 			}
