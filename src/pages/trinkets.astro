@@ -84,30 +84,32 @@ import Footer from '../components/Footer.astro';
 						const stageH = stage.offsetHeight;
 						const trinketW = (t.size / 100) * stageW;
 						const scale = ZOOM_TARGET / trinketW;
-						div.classList.add('zoomed');
-						div.style.transform = 'scale(' + scale + ')';
+					div.classList.add('zoomed');
+					div.style.transform = 'scale(' + scale + ')';
 
-						setTimeout(() => {
-							if (active !== div) return;
-							const stageRect = stage.getBoundingClientRect();
-							const tRect = div.getBoundingClientRect();
-							const rightEdge = tRect.right - stageRect.left;
-							const leftEdge = tRect.left - stageRect.left;
-							const topEdge = tRect.top - stageRect.top;
-							let cardX, cardY;
-							if (rightEdge + 175 < stageW) {
-								cardX = rightEdge + 6;
-							} else {
-								cardX = Math.max(4, leftEdge - 172);
-							}
-							cardY = Math.max(8, Math.min(topEdge, stageH - 170));
-							noteCard.style.left = cardX + 'px';
-							noteCard.style.top = cardY + 'px';
-							document.getElementById('nc-name').textContent = t.name;
-							document.getElementById('nc-loc').textContent = t.location;
-							document.getElementById('nc-note').textContent = t.note;
-							noteCard.classList.add('active');
-						}, 310);
+					const divW = div.offsetWidth;
+					const divH = div.offsetHeight;
+					const divLeft = div.offsetLeft;
+					const divTop = div.offsetTop;
+					const centerX = divLeft + divW / 2;
+					const centerY = divTop + divH / 2;
+					const zoomedW = divW * scale;
+					const rightEdge = centerX + zoomedW / 2;
+					const leftEdge = centerX - zoomedW / 2;
+					const topEdge = centerY - (divH * scale) / 2;
+					let cardX, cardY;
+					if (rightEdge + 175 < stage.offsetWidth) {
+						cardX = rightEdge + 6;
+					} else {
+						cardX = Math.max(4, leftEdge - 172);
+					}
+					cardY = Math.max(8, Math.min(topEdge, stage.offsetHeight - 170));
+					noteCard.style.left = cardX + 'px';
+					noteCard.style.top = cardY + 'px';
+					document.getElementById('nc-name').textContent = t.name;
+					document.getElementById('nc-loc').textContent = t.location;
+					document.getElementById('nc-note').textContent = t.note;
+					noteCard.classList.add('active');
 					});
 
 					stage.appendChild(div);
