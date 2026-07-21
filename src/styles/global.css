@@ -395,17 +395,9 @@ footer::after {
 
 .intro-box {
 	background: var(--panel-blue);
-	border: none;
 	padding: 14px 20px;
 	position: relative;
 	margin: 20px 0;
-	/* zigzag via SVG border-image */
-	border: 12px solid transparent;
-	border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpolyline points='0,10 10,0 20,10 10,20' fill='none' stroke='%232b4c7e' stroke-width='2'/%3E%3C/svg%3E") 12 repeat;
-}
-
-.intro-box h1 {
-	margin-top: 6px;
 }
 .featured-post {
 	background: #ffffff;
